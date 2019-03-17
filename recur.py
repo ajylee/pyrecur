@@ -96,6 +96,16 @@ def recur_gen(maybe_yielder):
             # less confusing than break
             return    
 
+
+def recursive(fn):
+    """Composes recur with fn."""
+    import functools
+
+    @functools.wraps(fn)
+    def fn2(*args, **kwargs):
+        return recur(fn(*args, **kwargs))
+
+    return fn2
         
 
 # Examples and testing
@@ -117,6 +127,7 @@ def test_all_substrings():
 
 
 # Test recur
+@recursive    
 def build_cycle(ll, cycle):
     _next = ll[cycle[-1]]
     if _next == cycle[0]:
@@ -125,7 +136,6 @@ def build_cycle(ll, cycle):
         cycle.append(_next)
         return Call(build_cycle, ll, cycle)
 
-    
 def regular_build_cycle(ll, cycle):
     _next = ll[cycle[-1]]
     if _next == cycle[0]:
@@ -137,7 +147,7 @@ def regular_build_cycle(ll, cycle):
 
 def test_build_cycle():
     ll = [0, 3, 4, 2, 5, 1]
-    assert recur(build_cycle(ll, [1])) == [1, 3, 2, 4, 5] == regular_build_cycle(ll, [1])
+    assert (build_cycle(ll, [1])) == [1, 3, 2, 4, 5] == regular_build_cycle(ll, [1])
 
 
 if __name__ == '__main__':
